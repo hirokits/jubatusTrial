@@ -26,11 +26,11 @@ public class JubaClustering {
 	}
 
 	private void makeAndPush() {
+		List<Datum> data_list = new ArrayList<Datum>();
 		for (int i = 0; i < 100; i++) {
-			List<Datum> data_list = new ArrayList<Datum>();
 			data_list.add(generateDatum());
-			client.push(data_list);
 		}
+		client.push(data_list);
 	}
 
 	public static void main(String[] args) {

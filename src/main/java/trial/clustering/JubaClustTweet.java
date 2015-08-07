@@ -16,7 +16,8 @@ import us.jubat.common.Datum.StringValue;
 
 
 public class JubaClustTweet {
-	private final static String tweetPath = "/Users/hiroki/Desktop/MIJS_Data/output.csv";
+//	private final static String TwitterPath = "/Users/hiroki/Desktop/MIJS_Data/twitter_mecab.csv";
+	private final static String TwitterPath = "/Users/hiroki/Desktop/MIJS_Data/twitter_mecab_10000.csv";
 
 	private final ClusteringClient client;
 	private final Random random;
@@ -25,7 +26,7 @@ public class JubaClustTweet {
 		this.client = client;
 		this.random = new Random(0);
 		// clear datum on cluster
-		//client.clear();
+//		client.clear();
 	}
 
 	public void tweetReadAndPush(String filePath) {
@@ -45,16 +46,19 @@ public class JubaClustTweet {
 				// Tweet内容取得
 				tweet = getTweet(line);
 				// TODO Tweetデータ格納
-				datums.add(makeDatum("tweet" + random.nextInt(10), tweet));
+//				datums.add(makeDatum("tweet" + random.nextInt(10), tweet));
+				datums.add(makeDatum(String.valueOf(random.nextInt(1000)), tweet));
+				//datums.add(makeDatum("tweet", tweet));
 				pushCnt++;
-				if (0 == (pushCnt % 5000)) {
+				if (0 == (pushCnt % 500)) {
 					client.push(datums);
-					System.out.println("num of push : " + pushCnt);
-					System.out.println("tweet       : " + tweet);
+					System.out.println("num of push : " + pushCnt + " : " + tweet);
 					datums.clear();
+					Thread.sleep(2000L);
 				}
 			}
 			if (!datums.isEmpty()) {
+				System.out.println("datum is not empty");
 				client.push(datums);
 			}
 		} catch (Exception e) {
@@ -89,7 +93,7 @@ public class JubaClustTweet {
 	 */
 	private static Datum makeDatum(String x, String y) {
 		Datum datum = new Datum();
-		datum.addString("tweet", "今どき	ブログ	稼ぐ	?	-	WirelessWire");
+		datum.addString(x, y);
 		return datum;
 	}
 
@@ -97,16 +101,16 @@ public class JubaClustTweet {
 		//String host = "127.0.0.1";
 		String host = "192.168.56.101";
 		try {
-			ClusteringClient client = new ClusteringClient(host, 9199, "test", 1);
+			ClusteringClient client = new ClusteringClient(host, 9199, "test", 180);
 			JubaClustTweet s = new JubaClustTweet(client);
 			// TODO push data
-			s.tweetReadAndPush(tweetPath);
+//			s.tweetReadAndPush(TwitterPath);
 			List<Datum> kList = client.getKCenter();
 			System.out.println("=== k size : " + kList.size());
-			for (Datum kDatum : kList) {
-				StringValue strVal = kDatum.stringValues.get(0);
-				System.out.println(strVal.key + " " + strVal.value);
-			}
+//			for (Datum kDatum : kList) {
+//				StringValue strVal = kDatum.stringValues.get(0);
+//				System.out.println(strVal.key + " " + strVal.value);
+//			}
 			
 			List<List<WeightedDatum>> coreList = client.getCoreMembers();
 			System.out.println("=== core size : " + coreList.size());
@@ -118,8 +122,9 @@ public class JubaClustTweet {
 //				}
 //			}
 			
-			// 検証
-			Datum data = makeDatum("tweet", "今どき	ブログ	稼ぐ	?	-	WirelessWire");
+			// TODO 検証
+//			Datum data = makeDatum("tweet", "伊豆高原	駅	つい	ねよ"); // 4件：伊豆高原
+			Datum data = makeDatum("tweet", "モーニング"); // 12件：モーニング
 
 			System.out.println("=== provide");
 			outDatumData(data);
