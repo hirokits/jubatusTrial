@@ -92,6 +92,7 @@ public class Shogun {
 	private static EstimateResult findBestResult(List<EstimateResult> res) {
 		EstimateResult best = null;
 		for (EstimateResult r : res) {
+			System.out.println(r.label + " : " + r.score);
 			if (best == null || best.score < r.score) {
 				best = r;
 			}
@@ -103,11 +104,12 @@ public class Shogun {
 		// predict the last shogun
 //		Datum[] data = { makeDatum("慶喜"), makeDatum("義昭"), makeDatum("守時"), };
 //		Datum[] data = { makeDatum("吉宗"), makeDatum("義昭"), makeDatum("政子"), };
-		Datum[] data = { makeDatum("慶喜"), makeDatum("義昭"), makeDatum("吉成"), };
+		Datum[] data = { makeDatum("慶喜"), makeDatum("義昭"), makeDatum("吉成"), makeDatum("守時"),};
 		for (Datum datum : data) {
 			List<List<EstimateResult>> res = client.classify(
 					Arrays.asList(datum));
 			// get the predicted shogun name
+			
 			System.out.println(findBestResult(res.get(0)).label
 					+ datum.stringValues.get(0).value);
 		}
